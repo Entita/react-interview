@@ -79,7 +79,7 @@ curl -X DELETE 'https://nktebdhspzvpwguqcksn.supabase.co/rest/v1/teams?some_colu
 Read all teams with employee ids
 
 ```Bash
-curl 'https://nktebdhspzvpwguqcksn.supabase.co/rest/v1/teams?select=*,emnployees(id)' \
+curl 'https://nktebdhspzvpwguqcksn.supabase.co/rest/v1/teams?select=*,employees(id)' \
 -H "apikey: SUPABASE_KEY" \
 -H "Authorization: Bearer SUPABASE_KEY"
 ```
