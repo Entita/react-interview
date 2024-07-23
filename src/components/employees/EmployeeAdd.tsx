@@ -8,6 +8,7 @@ import {
   TextField,
   Typography,
   Button,
+  MenuItem,
 } from "@mui/material";
 import { useState } from "react";
 import { yupResolver } from "@hookform/resolvers/yup";
@@ -15,6 +16,8 @@ import * as yup from "yup";
 import { FormFieldError } from "../forms/FormFieldError";
 import { FormError } from "../forms/FormError";
 import { FormSuccess } from "../forms/FormSuccess";
+import axios from "axios";
+import { TeamsType } from "@/types/supabase";
 
 const schema = yup.object().shape({
   name: yup.string().required("Name is required"),
@@ -27,11 +30,7 @@ const schema = yup.object().shape({
     .min(yup.ref("startDate"), "End date can't be before start date"),
 });
 
-export const EmployeeAdd = (
-  {
-    /* teams */
-  }
-) => {
+export const EmployeeAdd = ({ teams = [], setTeams }: { teams?: TeamsType[], setTeams: Function }) => {
   const [formError, setFormError] = useState(false);
   const [success, setSuccess] = useState(false);
 
@@ -43,7 +42,13 @@ export const EmployeeAdd = (
   } = useForm({ resolver: yupResolver(schema) });
 
   const onSubmit = handleSubmit((formData) => {
-    console.log(formData);
+    axios.post('/api/add_employee', { data: formData })
+      .then(({ data }) => {
+        setTeams(data)
+        setSuccess(true)
+      })
+      .catch(() => setSuccess(false))
+      .finally(() => reset())
   });
 
   return (
@@ -88,11 +93,11 @@ export const EmployeeAdd = (
             control={control}
             render={({ field }) => (
               <Select {...field} label="Team">
-                {/*                 {teams.map((team) => (
+                {teams.map((team: TeamsType) => (
                   <MenuItem key={team.id} value={team.id}>
                     {team.name}
                   </MenuItem>
-                ))} */}
+                ))}
               </Select>
             )}
           />

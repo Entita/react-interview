@@ -51,6 +51,7 @@ export interface Database {
       };
       teams: {
         Row: {
+          [x: string]: any;
           createdAt: string | null;
           id: string;
           name: string | null;
@@ -84,4 +85,13 @@ export interface Database {
       [_ in never]: never;
     };
   };
+}
+
+export interface TeamsType {
+  childTeams?: TeamsType[]
+  createdAt: string | null;
+  employees: Database['public']['Tables']['employees']['Row'][];
+  id: string;
+  name: string | null;
+  parentTeam: string | null;
 }

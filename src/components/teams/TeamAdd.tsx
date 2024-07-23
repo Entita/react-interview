@@ -1,5 +1,4 @@
 import { Controller, useForm } from "react-hook-form";
-import AddIcon from "@mui/icons-material/Add";
 import {
   FormControl,
   InputLabel,
@@ -16,17 +15,15 @@ import * as yup from "yup";
 import { FormFieldError } from "../forms/FormFieldError";
 import { FormSuccess } from "../forms/FormSuccess";
 import { FormError } from "../forms/FormError";
+import axios from "axios";
+import { TeamsType } from "@/types/supabase";
 
 const schema = yup.object().shape({
   name: yup.string().required("Name is required"),
-  parentTeam: yup.string(),
+  parentTeam: yup.string().nullable(),
 });
 
-export const TeamAdd = (
-  {
-    /* teams */
-  }
-) => {
+export const TeamAdd = ({ teams = [], setTeams }: { teams?: TeamsType[], setTeams: Function }) => {
   const [formError, setFormError] = useState(false);
   const [success, setSuccess] = useState(false);
 
@@ -38,11 +35,14 @@ export const TeamAdd = (
   } = useForm({ resolver: yupResolver(schema) });
 
   const onSubmit = handleSubmit((formData) => {
-    // Process formData as needed
-    console.log(formData);
-    setSuccess(true);
-    reset();
-    setTimeout(() => setSuccess(false), 2000);
+    if (formData.parentTeam === '') formData.parentTeam = null
+    axios.post('/api/add_team', { data: formData })
+      .then(({ data }) => {
+        setTeams(data)
+        setSuccess(true)
+      })
+      .catch(() => setSuccess(false))
+      .finally(() => reset())
   });
 
   return (
@@ -70,11 +70,11 @@ export const TeamAdd = (
             control={control}
             render={({ field }) => (
               <Select {...field} label="Parent team">
-                {/*         {teams.map((team) => (
+                {teams.map((team: TeamsType) => (
                   <MenuItem key={team.id} value={team.id}>
                     {team.name}
                   </MenuItem>
-                ))} */}
+                ))}
               </Select>
             )}
           />
