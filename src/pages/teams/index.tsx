@@ -7,8 +7,9 @@ import TeamEdit from '@/components/teams/TeamEdit'
 import { TeamsType } from '@/types/supabase'
 
 const getNestedTeams = (teams: TeamsType[]) => {
-  var nestedTeams = teams.reduce((result: TeamsType[], currTeam: TeamsType) => {
-    const parent = currTeam.parentTeam ? teams.filter((team: TeamsType) => team.id === currTeam.parentTeam) : []
+  const cloneTeams = JSON.parse(JSON.stringify(teams))
+  var nestedTeams = cloneTeams.reduce((result: TeamsType[], currTeam: TeamsType) => {
+    const parent = currTeam.parentTeam ? cloneTeams.filter((team: TeamsType) => team.id === currTeam.parentTeam) : []
     if (parent.length) {
       if (parent[0].childTeams) parent[0].childTeams.push(currTeam)
       else parent[0].childTeams = [currTeam]
